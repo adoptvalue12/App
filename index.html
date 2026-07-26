@@ -1,0 +1,989 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>TalkSnap Kids — Starter</title>
+  <meta name="theme-color" content="#111827" />
+  <style>
+    :root{
+      --bg:#0b1020;
+      --panel:rgba(255,255,255,.06);
+      --panel-2:rgba(255,255,255,.09);
+      --stroke:rgba(255,255,255,.10);
+      --text:#f8fafc;
+      --muted:rgba(248,250,252,.68);
+      --accent:#22d3ee;
+      --accent2:#f472b6;
+      --good:#34d399;
+      --danger:#fb7185;
+      --radius:24px;
+      --shadow:0 24px 70px rgba(0,0,0,.28);
+      color-scheme: dark;
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      min-height:100vh;
+      color:var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(244,114,182,.20), transparent 22%),
+        radial-gradient(circle at top right, rgba(34,211,238,.16), transparent 22%),
+        linear-gradient(180deg, #090d18, #0b1020 40%, #111827 100%);
+    }
+    button,input,textarea,select{font:inherit}
+    button{border:0; cursor:pointer}
+    a{color:inherit}
+    .wrap{
+      min-height:100vh;
+      max-width:1400px;
+      margin:0 auto;
+      padding:16px;
+      display:grid;
+      grid-template-columns: 320px 1fr 330px;
+      gap:16px;
+    }
+    .card{
+      background:var(--panel);
+      border:1px solid var(--stroke);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      backdrop-filter: blur(20px);
+    }
+    .side, .main, .right{
+      min-height: calc(100vh - 32px);
+    }
+    .side, .right{padding:16px}
+    .brand{
+      display:flex; gap:14px; align-items:center; margin-bottom:16px;
+    }
+    .logo{
+      width:54px;height:54px;border-radius:18px;
+      background:linear-gradient(135deg,var(--accent2),#8b5cf6,var(--accent));
+      display:grid;place-items:center;
+      font-size:1.4rem;font-weight:800;
+      box-shadow:0 16px 35px rgba(236,72,153,.18);
+    }
+    .brand h1{margin:0;font-size:1.1rem}
+    .brand p{margin:4px 0 0;color:var(--muted);font-size:.9rem}
+    .panel{padding:14px}
+    .row{display:flex;gap:10px;align-items:center}
+    .stack{display:grid;gap:10px}
+    .tabs{display:grid;grid-template-columns:1fr 1fr;margin-bottom:12px}
+    .tab{
+      padding:12px 10px;border-radius:16px;background:transparent;color:var(--muted)
+    }
+    .tab.active{background:rgba(255,255,255,.10);color:var(--text);font-weight:700}
+    .field, textarea, select{
+      width:100%;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(0,0,0,.22);
+      color:var(--text);
+      border-radius:16px;
+      padding:13px 14px;
+      outline:none;
+    }
+    textarea{resize:vertical; min-height:92px}
+    .btn{
+      padding:13px 14px;
+      border-radius:16px;
+      color:#08111d;
+      background:#fff;
+      font-weight:800;
+      transition:.18s transform ease,.18s opacity ease;
+    }
+    .btn:hover{transform:translateY(-1px)}
+    .btn.secondary{background:rgba(255,255,255,.10); color:var(--text); border:1px solid rgba(255,255,255,.08)}
+    .btn.accent{background:linear-gradient(135deg,var(--accent2),var(--accent)); color:#07111c}
+    .btn.full{width:100%}
+    .small{font-size:.86rem;color:var(--muted)}
+    .chip{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:8px 12px;border-radius:999px;
+      background:rgba(255,255,255,.10); color:var(--muted);
+      font-size:.82rem;
+    }
+    .section-title{
+      display:flex;justify-content:space-between;align-items:flex-start;gap:12px;
+      margin-bottom:12px;
+    }
+    .section-title h2,.section-title h3{margin:0}
+    .section-title p{margin:4px 0 0;color:var(--muted);font-size:.9rem}
+    .grid{display:grid;gap:14px}
+    .main{padding:16px 0}
+    .hero{
+      padding:18px 18px 14px;
+      margin-bottom:16px;
+    }
+    .hero h2{margin:0 0 8px;font-size:clamp(1.5rem,3vw,2.5rem)}
+    .hero p{margin:0;color:var(--muted);max-width:900px}
+    .hero-top{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;flex-wrap:wrap}
+    .lang-switch{display:flex;gap:8px;flex-wrap:wrap}
+    .lang{
+      padding:10px 12px;border-radius:14px;background:rgba(255,255,255,.08);color:var(--text)
+    }
+    .lang.active{background:#fff;color:#08111d;font-weight:800}
+    .layout{
+      display:grid;
+      grid-template-columns: 1.12fr .88fr;
+      gap:16px;
+    }
+    .feed, .composer, .stories, .messages, .friends, .communities, .profile, .settings{
+      padding:16px;
+    }
+    .feed-list{display:grid;gap:12px}
+    .post{
+      overflow:hidden;
+      border-radius:24px;
+      border:1px solid rgba(255,255,255,.09);
+      background:rgba(255,255,255,.05);
+    }
+    .post-visual{
+      min-height:180px;
+      padding:16px;
+      display:flex;flex-direction:column;justify-content:flex-end;
+      background:
+        linear-gradient(135deg, rgba(244,114,182,.20), rgba(34,211,238,.08)),
+        radial-gradient(circle at top right, rgba(255,255,255,.12), transparent 30%);
+    }
+    .post-visual.reel{min-height:260px}
+    .post-body{padding:14px 16px}
+    .post-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+    .avatar{
+      width:44px;height:44px;border-radius:16px;
+      background:linear-gradient(135deg,var(--accent2),var(--accent));
+      display:grid;place-items:center;
+      font-weight:800;
+    }
+    .meta{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:.88rem;flex-wrap:wrap}
+    .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+    .actions .btn{padding:10px 12px;border-radius:14px;font-weight:700}
+    .actions .btn.secondary{color:var(--text)}
+    .story-strip{display:flex;gap:12px;overflow:auto;padding-bottom:4px}
+    .story{
+      min-width:92px;
+      text-align:center;
+    }
+    .story .ring{
+      width:74px;height:74px;border-radius:22px;margin:0 auto 8px;
+      padding:3px;background:linear-gradient(135deg,var(--accent2),var(--accent));
+    }
+    .story .inner{
+      width:100%;height:100%;border-radius:19px;background:#111827;
+      display:grid;place-items:center;font-weight:800;
+    }
+    .conversation{display:grid;gap:10px;max-height:360px;overflow:auto;padding-right:6px}
+    .bubble{
+      max-width:82%;
+      padding:12px 14px;border-radius:18px;
+      background:rgba(255,255,255,.08);
+      border-top-left-radius:8px;
+    }
+    .bubble.me{
+      margin-left:auto;
+      border-top-right-radius:8px;
+      background:linear-gradient(135deg,var(--accent2),var(--accent));
+      color:#06111b;
+      font-weight:700;
+    }
+    .chat-box{display:flex;gap:10px;margin-top:12px}
+    .chat-box input{flex:1}
+    .friend-list,.community-list,.mini-list{display:grid;gap:10px}
+    .mini-item{
+      display:flex;justify-content:space-between;gap:10px;align-items:center;
+      padding:12px 14px;border-radius:18px;background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.05);
+    }
+    .mini-item strong{display:block}
+    .mini-item span{color:var(--muted);font-size:.88rem}
+    .badge{
+      padding:7px 10px;border-radius:999px;font-size:.78rem;font-weight:800;
+      background:rgba(255,255,255,.10)
+    }
+    .online{color:#86efac}
+    .offline{color:#94a3b8}
+    .profile-head{
+      display:flex;align-items:center;gap:14px;flex-wrap:wrap
+    }
+    .profile-badge{
+      width:92px;height:92px;border-radius:28px;
+      display:grid;place-items:center;
+      background:linear-gradient(135deg,var(--accent2),var(--accent));
+      font-size:2rem;font-weight:900;
+      color:#08111d;
+    }
+    .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+    .stat{
+      padding:12px;border-radius:18px;background:rgba(255,255,255,.06);
+      text-align:center
+    }
+    .stat strong{display:block;font-size:1.1rem}
+    .stat span{color:var(--muted);font-size:.82rem}
+    .toggle-row{display:flex;gap:10px;flex-wrap:wrap}
+    .footer-note{color:var(--muted);font-size:.82rem;line-height:1.4}
+    .mobile-nav{
+      display:none;
+      position:fixed;left:16px;right:16px;bottom:16px;
+      padding:10px;background:rgba(10,15,30,.85);backdrop-filter: blur(18px);
+      border:1px solid rgba(255,255,255,.10);border-radius:22px;
+      justify-content:space-between;gap:8px;z-index:50;
+    }
+    .nav-btn{
+      flex:1;
+      display:flex;flex-direction:column;align-items:center;gap:6px;
+      color:var(--muted);
+      background:transparent;
+      padding:10px 6px;border-radius:16px
+    }
+    .nav-btn.active{background:rgba(255,255,255,.08);color:var(--text)}
+    .modal-backdrop{
+      position:fixed;inset:0;background:rgba(0,0,0,.45);
+      display:none;align-items:center;justify-content:center;padding:16px;z-index:80;
+    }
+    .modal{
+      width:min(560px,100%);
+      padding:16px;
+    }
+    .modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+    .hidden{display:none !important}
+
+    @media (max-width: 1180px){
+      .wrap{grid-template-columns: 1fr; padding-bottom:110px}
+      .side, .main, .right{min-height:auto}
+      .right{display:none}
+      .mobile-nav{display:flex}
+      .layout{grid-template-columns:1fr}
+      .side{order:2}
+      .main{order:1}
+    }
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+
+  <div class="mobile-nav" id="mobileNav">
+    <button class="nav-btn active" data-nav="feed">🏠<small>Feed</small></button>
+    <button class="nav-btn" data-nav="stories">✨<small>Stories</small></button>
+    <button class="nav-btn" data-nav="messages">💬<small>Chats</small></button>
+    <button class="nav-btn" data-nav="friends">👥<small>Friends</small></button>
+    <button class="nav-btn" data-nav="profile">👤<small>Profil</small></button>
+  </div>
+
+  <div class="modal-backdrop" id="authModal">
+    <div class="card modal">
+      <div class="modal-head">
+        <div>
+          <h3 id="authTitle" style="margin:0">Créer un compte</h3>
+          <p id="authDesc" class="small" style="margin:4px 0 0">Version simple inspirée de Snapchat pour démarrer vite.</p>
+        </div>
+        <button class="btn secondary" id="closeAuth">✕</button>
+      </div>
+
+      <div class="tabs">
+        <button class="tab active" id="tabRegister">Créer un compte</button>
+        <button class="tab" id="tabLogin">Se connecter</button>
+      </div>
+
+      <div class="stack">
+        <input class="field" id="authUsername" placeholder="Nom d'utilisateur" />
+        <input class="field" id="authDisplayName" placeholder="Nom affiché" />
+        <input class="field" id="authPassword" type="password" placeholder="Mot de passe" />
+        <select class="field" id="authLanguage">
+          <option value="fr">Français</option>
+          <option value="en">English</option>
+          <option value="es">Español</option>
+        </select>
+        <button class="btn accent full" id="authSubmit">Créer le compte</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const LS_KEY = "talksnap-kids-starter-v1";
+
+    const i18n = {
+      fr: {
+        appName: "TalkSnap Kids",
+        tagline: "Messages, amis par code, stories et mini-reels dans une seule appli.",
+        login: "Se connecter",
+        signup: "Créer un compte",
+        welcome: "Une app simple inspirée de Snapchat pour parler avec tes amis, partager des stories et publier des vidéos courtes.",
+        friendCode: "Code ami",
+        addFriend: "Ajouter",
+        addFriendTitle: "Ajouter un ami par code",
+        feed: "Fil",
+        stories: "Stories",
+        messages: "Messages",
+        friends: "Amis",
+        profile: "Profil",
+        settings: "Paramètres",
+        publish: "Publier",
+        postTitle: "Publier une story ou un reel",
+        storyHint: "Les stories durent 24h. Les reels vont jusqu'à 60 secondes dans la vraie version.",
+        send: "Envoyer",
+        writeMsg: "Écrire un message...",
+        createPost: "Créer une publication",
+        language: "Langue",
+        logout: "Déconnexion",
+      },
+      en: {
+        appName: "TalkSnap Kids",
+        tagline: "Messages, friend codes, stories, and mini-reels in one app.",
+        login: "Log in",
+        signup: "Sign up",
+        welcome: "A simple Snapchat-inspired app to chat with friends, share stories and post short videos.",
+        friendCode: "Friend code",
+        addFriend: "Add",
+        addFriendTitle: "Add a friend by code",
+        feed: "Feed",
+        stories: "Stories",
+        messages: "Messages",
+        friends: "Friends",
+        profile: "Profile",
+        settings: "Settings",
+        publish: "Publish",
+        postTitle: "Publish a story or reel",
+        storyHint: "Stories last 24h. Reels can be up to 60 seconds in the full version.",
+        send: "Send",
+        writeMsg: "Write a message...",
+        createPost: "Create post",
+        language: "Language",
+        logout: "Log out",
+      },
+      es: {
+        appName: "TalkSnap Kids",
+        tagline: "Mensajes, amigos por código, historias y mini-reels en una sola app.",
+        login: "Iniciar sesión",
+        signup: "Crear cuenta",
+        welcome: "Una app simple inspirada en Snapchat para hablar con amigos, compartir historias y publicar videos cortos.",
+        friendCode: "Código amigo",
+        addFriend: "Añadir",
+        addFriendTitle: "Añadir un amigo por código",
+        feed: "Inicio",
+        stories: "Historias",
+        messages: "Mensajes",
+        friends: "Amigos",
+        profile: "Perfil",
+        settings: "Ajustes",
+        publish: "Publicar",
+        postTitle: "Publicar una historia o reel",
+        storyHint: "Las historias duran 24h. Los reels pueden durar hasta 60 segundos en la versión completa.",
+        send: "Enviar",
+        writeMsg: "Escribe un mensaje...",
+        createPost: "Crear publicación",
+        language: "Idioma",
+        logout: "Cerrar sesión",
+      }
+    };
+
+    const defaultState = {
+      lang: "fr",
+      view: "feed",
+      authMode: "register",
+      loggedIn: false,
+      user: null,
+      users: [],
+      posts: [
+        { id: 1, user: "Nova", type: "reel", title: "Night edit", text: "Vidéo verticale inspiration Snap/TikTok.", likes: 182, comments: 24, color: "a" },
+        { id: 2, user: "Luna", type: "story", title: "Weekend", text: "Story qui disparaît après 24h.", likes: 96, comments: 11, color: "b" },
+      ],
+      messages: [
+        { id: 1, from: "Mika", text: "Envoie ton code ID 👀" },
+        { id: 2, from: "You", text: "Bien sûr, je te l’envoie !" },
+        { id: 3, from: "Mika", text: "Parfait, j’ai envoyé la demande." },
+      ],
+      stories: [
+        { id: 1, user: "Rin", label: "Story live" },
+        { id: 2, user: "Sara", label: "Photo snap" },
+        { id: 3, user: "Alex", label: "Morning" },
+        { id: 4, user: "Nina", label: "Music" },
+      ],
+      communities: [
+        { id: 1, name: "Friends Lounge", desc: "Salon privé pour proches", status: "online" },
+        { id: 2, name: "Anime Club", desc: "Discussions + messages épinglés", status: "online" },
+        { id: 3, name: "Gaming Squad", desc: "Voix + partage de clips", status: "offline" },
+      ],
+      selectedFriendCode: "",
+      draftTitle: "",
+      draftText: "",
+      draftMessage: "",
+    };
+
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(LS_KEY);
+        if (!raw) return structuredClone(defaultState);
+        const saved = JSON.parse(raw);
+        return { ...structuredClone(defaultState), ...saved };
+      } catch {
+        return structuredClone(defaultState);
+      }
+    }
+
+    let state = loadState();
+
+    function saveState() {
+      localStorage.setItem(LS_KEY, JSON.stringify(state));
+    }
+
+    function codeGen() {
+      const a = Math.floor(1000 + Math.random() * 9000);
+      const b = Math.floor(1000 + Math.random() * 9000);
+      return `TS-${a}-${b}`;
+    }
+
+    function userInitial(name) {
+      return (name || "U").trim().slice(0, 1).toUpperCase();
+    }
+
+    function t() {
+      return i18n[state.lang];
+    }
+
+    function loginOrRegister() {
+      state.loggedIn = true;
+      if (!state.user) {
+        state.user = {
+          username: "user",
+          displayName: "Your Name",
+          code: codeGen(),
+          bio: "Bio courte pour ton profil.",
+          lang: state.lang,
+        };
+      }
+      saveState();
+      hideAuth();
+      render();
+    }
+
+    function showAuth() {
+      document.getElementById("authModal").style.display = "flex";
+    }
+
+    function hideAuth() {
+      document.getElementById("authModal").style.display = "none";
+    }
+
+    function switchNav(view) {
+      state.view = view;
+      saveState();
+      render();
+      document.querySelectorAll(".nav-btn").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.nav === view);
+      });
+    }
+
+    function authMode(mode) {
+      state.authMode = mode;
+      document.getElementById("tabRegister").classList.toggle("active", mode === "register");
+      document.getElementById("tabLogin").classList.toggle("active", mode === "login");
+      document.getElementById("authSubmit").textContent = mode === "register" ? t().signup : t().login;
+      document.getElementById("authTitle").textContent = mode === "register" ? t().signup : t().login;
+      document.getElementById("authDesc").textContent = mode === "register"
+        ? "Version simple inspirée de Snapchat pour démarrer vite."
+        : "Reprendre ton compte existant.";
+    }
+
+    function publish() {
+      const title = document.getElementById("draftTitle").value.trim();
+      const text = document.getElementById("draftText").value.trim();
+      if (!title || !text) return;
+      state.posts.unshift({
+        id: Date.now(),
+        user: state.user?.displayName || "You",
+        type: "reel",
+        title,
+        text,
+        likes: 0,
+        comments: 0,
+        color: Math.random() > .5 ? "a" : "b",
+      });
+      document.getElementById("draftTitle").value = "";
+      document.getElementById("draftText").value = "";
+      saveState();
+      render();
+    }
+
+    function addFriend() {
+      const input = document.getElementById("friendCode");
+      const code = input.value.trim().toUpperCase();
+      if (!code) return;
+      state.users.push({
+        id: Date.now(),
+        code,
+        username: code.toLowerCase().replace(/[^a-z0-9]/g, ""),
+        displayName: "Friend " + code.slice(-4),
+      });
+      input.value = "";
+      saveState();
+      render();
+    }
+
+    function sendMessage() {
+      const input = document.getElementById("messageInput");
+      const text = input.value.trim();
+      if (!text) return;
+      state.messages.push({ id: Date.now(), from: "You", text });
+      input.value = "";
+      saveState();
+      render();
+    }
+
+    function setLanguage(lang) {
+      state.lang = lang;
+      if (state.user) state.user.lang = lang;
+      saveState();
+      render();
+    }
+
+    function renderStories() {
+      const html = state.stories.map(s => `
+        <div class="story">
+          <div class="ring"><div class="inner">${userInitial(s.user)}</div></div>
+          <div style="font-size:.84rem">${s.user}</div>
+          <div class="small">${s.label}</div>
+        </div>
+      `).join("");
+      return `<div class="story-strip">${html}</div>`;
+    }
+
+    function renderPosts() {
+      return state.posts.map(post => `
+        <article class="post">
+          <div class="post-visual ${post.color === "a" ? "reel" : ""}">
+            <div class="post-top">
+              <div class="row">
+                <div class="avatar">${userInitial(post.user)}</div>
+                <div>
+                  <strong>${post.user}</strong>
+                  <div class="meta"><span>@${String(post.user).toLowerCase().replace(/\s+/g, "")}</span><span>•</span><span>${post.type.toUpperCase()}</span></div>
+                </div>
+              </div>
+              <span class="badge">${post.type}</span>
+            </div>
+            <div style="margin-top:18px;max-width:560px">
+              <h3 style="margin:0 0 6px">${post.title}</h3>
+              <div class="small" style="color:rgba(255,255,255,.78)">${post.text}</div>
+            </div>
+          </div>
+          <div class="post-body">
+            <div class="meta"><span>❤️ ${post.likes}</span><span>💬 ${post.comments}</span><span>👁️ Live</span></div>
+            <div class="actions">
+              <button class="btn secondary">Like</button>
+              <button class="btn secondary">Comment</button>
+              <button class="btn secondary">Share</button>
+            </div>
+          </div>
+        </article>
+      `).join("");
+    }
+
+    function renderMessages() {
+      return state.messages.map(m => `
+        <div class="bubble ${m.from === "You" ? "me" : ""}">${m.text}</div>
+      `).join("");
+    }
+
+    function renderFriends() {
+      const myCode = state.user?.code || "TS-0000-0000";
+      const friends = state.users.length ? state.users : [{ displayName: "No friends yet", code: "—" }];
+      return `
+        <div class="card panel">
+          <div class="section-title">
+            <div>
+              <h3>${t().addFriendTitle}</h3>
+              <p>Ton code: <strong>${myCode}</strong></p>
+            </div>
+            <span class="badge">ID</span>
+          </div>
+          <div class="row">
+            <input class="field" id="friendCode" placeholder="TS-1234-5678" />
+            <button class="btn accent" id="addFriendBtn">${t().addFriend}</button>
+          </div>
+        </div>
+        <div class="friend-list" style="margin-top:12px">
+          ${friends.map(friend => `
+            <div class="mini-item">
+              <div>
+                <strong>${friend.displayName || "Friend"}</strong>
+                <span>${friend.code}</span>
+              </div>
+              <div class="badge online">Online</div>
+            </div>
+          `).join("")}
+        </div>
+      `;
+    }
+
+    function renderCommunities() {
+      return state.communities.map(c => `
+        <div class="mini-item">
+          <div>
+            <strong>${c.name}</strong>
+            <span>${c.desc}</span>
+          </div>
+          <div class="badge ${c.status === "online" ? "online" : "offline"}">${c.status}</div>
+        </div>
+      `).join("");
+    }
+
+    function render() {
+      const app = document.getElementById("app");
+      const title = t();
+
+      if (!state.loggedIn) {
+        app.innerHTML = `
+          <div class="wrap" style="grid-template-columns:1fr">
+            <div class="card hero">
+              <div class="hero-top">
+                <div>
+                  <div class="chip">✨ Starter app</div>
+                  <h2>${title.appName}</h2>
+                  <p>${title.tagline}</p>
+                </div>
+                <div class="lang-switch">
+                  ${Object.keys(i18n).map(l => `<button class="lang ${state.lang === l ? "active" : ""}" data-lang="${l}">${l.toUpperCase()}</button>`).join("")}
+                </div>
+              </div>
+            </div>
+
+            <div class="layout">
+              <div class="card panel">
+                <div class="section-title">
+                  <div>
+                    <h3>${title.signup}</h3>
+                    <p>Créer un compte et obtenir ton code unique.</p>
+                  </div>
+                </div>
+                <div class="stack">
+                  <input class="field" id="authUsername" placeholder="Nom d'utilisateur" />
+                  <input class="field" id="authDisplayName" placeholder="Nom affiché" />
+                  <input class="field" id="authPassword" type="password" placeholder="Mot de passe" />
+                  <select class="field" id="authLanguage">
+                    <option value="fr">Français</option>
+                    <option value="en">English</option>
+                    <option value="es">Español</option>
+                  </select>
+                  <button class="btn accent full" id="authSubmit2">${title.signup}</button>
+                  <button class="btn secondary full" id="openLogin">${title.login}</button>
+                </div>
+              </div>
+
+              <div class="card panel">
+                <div class="section-title">
+                  <div>
+                    <h3>Fonctions</h3>
+                    <p>Inspiré de Snapchat + JustTalk Kids.</p>
+                  </div>
+                </div>
+                <div class="mini-list">
+                  <div class="mini-item"><div><strong>Amis par code</strong><span>Ajouter des personnes facilement</span></div><span class="badge">OK</span></div>
+                  <div class="mini-item"><div><strong>Stories 24h</strong><span>Photos ou vidéos temporaires</span></div><span class="badge">OK</span></div>
+                  <div class="mini-item"><div><strong>Feed vertical</strong><span>Mini-reels et posts</span></div><span class="badge">OK</span></div>
+                  <div class="mini-item"><div><strong>Messages privés</strong><span>Chat simple et rapide</span></div><span class="badge">OK</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+
+        document.querySelectorAll("[data-lang]").forEach(btn => {
+          btn.onclick = () => setLanguage(btn.dataset.lang);
+        });
+        document.getElementById("authSubmit2").onclick = () => {
+          const username = document.getElementById("authUsername").value.trim();
+          const displayName = document.getElementById("authDisplayName").value.trim();
+          const password = document.getElementById("authPassword").value.trim();
+          const language = document.getElementById("authLanguage").value;
+          if (!username || !displayName || password.length < 4) return alert("Remplis les champs du compte.");
+          state.user = { username, displayName, code: codeGen(), bio: "Prêt à discuter.", lang: language };
+          state.lang = language;
+          state.loggedIn = true;
+          saveState();
+          render();
+        };
+        document.getElementById("openLogin").onclick = showAuth;
+        return;
+      }
+
+      const navLabel = (key) => ({feed:title.feed, stories:title.stories, messages:title.messages, friends:title.friends, profile:title.profile, settings:title.settings}[key]);
+
+      app.innerHTML = `
+        <div class="wrap">
+          <aside class="side card">
+            <div class="brand">
+              <div class="logo">TS</div>
+              <div>
+                <h1>${title.appName}</h1>
+                <p>${title.tagline}</p>
+              </div>
+            </div>
+
+            <div class="card panel" style="margin-bottom:14px">
+              <div class="section-title">
+                <div>
+                  <p class="small" style="margin:0">${title.profile}</p>
+                  <h3 style="margin-top:4px">${state.user?.displayName || "Your Name"}</h3>
+                  <p style="margin-top:4px">Code: <strong>${state.user?.code || "TS-0000-0000"}</strong></p>
+                </div>
+                <div class="profile-badge">${userInitial(state.user?.displayName || "Y")}</div>
+              </div>
+              <div class="stats">
+                <div class="stat"><strong>${state.users.length}</strong><span>${title.friends}</span></div>
+                <div class="stat"><strong>${state.posts.length}</strong><span>${title.feed}</span></div>
+                <div class="stat"><strong>${state.stories.length}</strong><span>${title.stories}</span></div>
+              </div>
+            </div>
+
+            <div class="card panel" style="margin-bottom:14px">
+              <div class="section-title">
+                <div>
+                  <h3>${title.language}</h3>
+                  <p>Français / English / Español</p>
+                </div>
+              </div>
+              <div class="toggle-row">
+                ${Object.keys(i18n).map(l => `<button class="lang ${state.lang === l ? "active" : ""}" data-lang="${l}">${l.toUpperCase()}</button>`).join("")}
+              </div>
+            </div>
+
+            <div class="stack">
+              ${["feed","stories","messages","friends","profile","settings"].map(key => `
+                <button class="btn secondary full" data-view="${key}" style="text-align:left;display:flex;justify-content:space-between;align-items:center">
+                  <span>${navLabel(key)}</span><span>›</span>
+                </button>
+              `).join("")}
+            </div>
+
+            <div style="margin-top:14px" class="stack">
+              <button class="btn accent full" id="logoutBtn">${title.logout}</button>
+              <div class="footer-note">
+                Cette base fonctionne dans le navigateur et peut ensuite être transformée en app Android plus tard.
+              </div>
+            </div>
+          </aside>
+
+          <main class="main">
+            <div class="card hero">
+              <div class="hero-top">
+                <div>
+                  <div class="chip">👋 ${title.welcome}</div>
+                  <h2>${title.appName}</h2>
+                  <p>${title.tagline}</p>
+                </div>
+                <div class="lang-switch">
+                  ${Object.keys(i18n).map(l => `<button class="lang ${state.lang === l ? "active" : ""}" data-lang="${l}">${l.toUpperCase()}</button>`).join("")}
+                </div>
+              </div>
+            </div>
+
+            <div class="layout">
+              <section class="grid">
+                ${state.view === "feed" ? `
+                  <div class="card feed">
+                    <div class="section-title">
+                      <div>
+                        <h3>${title.postTitle}</h3>
+                        <p>${title.storyHint}</p>
+                      </div>
+                      <span class="badge">60s</span>
+                    </div>
+                    <div class="stack">
+                      <input class="field" id="draftTitle" placeholder="Titre" />
+                      <textarea id="draftText" placeholder="Texte, description, hashtags..."></textarea>
+                      <div class="row">
+                        <button class="btn accent" id="publishBtn">${title.publish}</button>
+                        <button class="btn secondary">📸 Story</button>
+                        <button class="btn secondary">🎙️ Vocal</button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="feed-list">${renderPosts()}</div>
+                ` : ""}
+
+                ${state.view === "stories" ? `
+                  <div class="card stories">
+                    <div class="section-title">
+                      <div>
+                        <h3>Stories</h3>
+                        <p>Photos et vidéos qui disparaissent après 24h.</p>
+                      </div>
+                      <span class="badge">24h</span>
+                    </div>
+                    ${renderStories()}
+                  </div>
+                  <div class="card feed">
+                    <div class="section-title">
+                      <div>
+                        <h3>Ajouter une story</h3>
+                        <p>Poste un snap rapide.</p>
+                      </div>
+                    </div>
+                    <div class="stack">
+                      <input class="field" placeholder="Titre de la story" />
+                      <textarea placeholder="Décris ta story..."></textarea>
+                      <div class="row">
+                        <button class="btn accent">Publier</button>
+                        <button class="btn secondary">Filtre</button>
+                      </div>
+                    </div>
+                  </div>
+                ` : ""}
+
+                ${state.view === "messages" ? `
+                  <div class="card messages">
+                    <div class="section-title">
+                      <div>
+                        <h3>Messages</h3>
+                        <p>Chat privé simple.</p>
+                      </div>
+                      <span class="badge">DM</span>
+                    </div>
+                    <div class="conversation">${renderMessages()}</div>
+                    <div class="chat-box">
+                      <input id="messageInput" class="field" placeholder="${title.writeMsg}" />
+                      <button class="btn accent" id="sendMsgBtn">${title.send}</button>
+                    </div>
+                  </div>
+                ` : ""}
+
+                ${state.view === "friends" ? `
+                  <div class="card friends">
+                    <div class="section-title">
+                      <div>
+                        <h3>${title.friends}</h3>
+                        <p>Ajoute des amis avec un code unique.</p>
+                      </div>
+                      <span class="badge">ID</span>
+                    </div>
+                    ${renderFriends()}
+                  </div>
+                ` : ""}
+
+                ${state.view === "profile" ? `
+                  <div class="card profile">
+                    <div class="section-title">
+                      <div>
+                        <h3>Profil</h3>
+                        <p>Photo, bio, code et publications.</p>
+                      </div>
+                      <span class="badge">Bio</span>
+                    </div>
+                    <div class="profile-head">
+                      <div class="profile-badge">${userInitial(state.user?.displayName || "Y")}</div>
+                      <div>
+                        <h3 style="margin:0">${state.user?.displayName || "Your Name"}</h3>
+                        <p style="margin:6px 0 0" class="small">@${state.user?.username || "username"} • ${state.user?.code || "TS-0000-0000"}</p>
+                        <p class="small" style="margin:8px 0 0;max-width:680px">${state.user?.bio || "Bio courte pour ton profil."}</p>
+                      </div>
+                    </div>
+                    <div class="stats">
+                      <div class="stat"><strong>${state.users.length}</strong><span>Amis</span></div>
+                      <div class="stat"><strong>${state.posts.length}</strong><span>Posts</span></div>
+                      <div class="stat"><strong>${state.stories.length}</strong><span>Stories</span></div>
+                    </div>
+                    <div class="row" style="margin-top:14px">
+                      <button class="btn accent">Modifier profil</button>
+                      <button class="btn secondary">QR code</button>
+                    </div>
+                  </div>
+                ` : ""}
+
+                ${state.view === "settings" ? `
+                  <div class="card settings">
+                    <div class="section-title">
+                      <div>
+                        <h3>Paramètres</h3>
+                        <p>Compte, langue, thème et sécurité.</p>
+                      </div>
+                      <span class="badge">⚙️</span>
+                    </div>
+                    <div class="mini-list">
+                      <div class="mini-item"><div><strong>Compte</strong><span>Nom, code, mot de passe</span></div><span>›</span></div>
+                      <div class="mini-item"><div><strong>Confidentialité</strong><span>Qui peut t’ajouter</span></div><span>›</span></div>
+                      <div class="mini-item"><div><strong>Notifications</strong><span>Messages, amis, stories</span></div><span>›</span></div>
+                      <div class="mini-item"><div><strong>Langue</strong><span>Changer l’affichage</span></div><span>›</span></div>
+                      <div class="mini-item"><div><strong>Sécurité</strong><span>Bloquer, signaler, protéger</span></div><span>›</span></div>
+                    </div>
+                  </div>
+                ` : ""}
+              </section>
+
+              <aside class="right card">
+                <div class="section-title">
+                  <div>
+                    <h3>Communautés</h3>
+                    <p>Version façon Discord.</p>
+                  </div>
+                  <span class="badge">Serveurs</span>
+                </div>
+                <div class="community-list">${renderCommunities()}</div>
+
+                <div class="card panel" style="margin-top:14px">
+                  <div class="section-title">
+                    <div>
+                      <h3>Idée du projet</h3>
+                      <p>Version simple et réaliste.</p>
+                    </div>
+                  </div>
+                  <div class="footer-note">
+                    Cette base est plus facile à finir qu’une app très lourde. On peut ensuite ajouter les appels, les salons vocaux, les réactions, les stories qui expirent et le vrai backend.
+                  </div>
+                </div>
+              </aside>
+            </div>
+          </main>
+        </div>
+      `;
+
+      document.querySelectorAll("[data-lang]").forEach(btn => {
+        btn.onclick = () => setLanguage(btn.dataset.lang);
+      });
+      document.querySelectorAll("[data-view]").forEach(btn => {
+        btn.onclick = () => switchNav(btn.dataset.view);
+      });
+
+      const logoutBtn = document.getElementById("logoutBtn");
+      if (logoutBtn) {
+        logoutBtn.onclick = () => {
+          state.loggedIn = false;
+          saveState();
+          render();
+        };
+      }
+
+      const publishBtn = document.getElementById("publishBtn");
+      if (publishBtn) publishBtn.onclick = publish;
+
+      const addFriendBtn = document.getElementById("addFriendBtn");
+      if (addFriendBtn) addFriendBtn.onclick = addFriend;
+
+      const sendMsgBtn = document.getElementById("sendMsgBtn");
+      if (sendMsgBtn) sendMsgBtn.onclick = sendMessage;
+
+      document.querySelectorAll(".nav-btn").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.nav === state.view);
+        btn.onclick = () => switchNav(btn.dataset.nav);
+      });
+
+      saveState();
+    }
+
+    document.getElementById("closeAuth").onclick = hideAuth;
+    document.getElementById("tabRegister").onclick = () => authMode("register");
+    document.getElementById("tabLogin").onclick = () => authMode("login");
+    document.getElementById("authSubmit").onclick = loginOrRegister;
+    document.getElementById("authModal").addEventListener("click", (e) => {
+      if (e.target.id === "authModal") hideAuth();
+    });
+
+    authMode(state.authMode);
+    render();
+
+    if (!state.loggedIn) {
+      showAuth();
+    }
+  </script>
+</body>
+</html>
