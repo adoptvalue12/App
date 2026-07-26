@@ -1,0 +1,1242 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>TalkSnap Kids — v2</title>
+  <meta name="theme-color" content="#0b1020" />
+  <style>
+    :root{
+      --bg1:#090d18;
+      --bg2:#111827;
+      --panel:rgba(255,255,255,.06);
+      --panel-strong:rgba(255,255,255,.10);
+      --stroke:rgba(255,255,255,.10);
+      --text:#f8fafc;
+      --muted:rgba(248,250,252,.68);
+      --muted2:rgba(248,250,252,.5);
+      --accent:#22d3ee;
+      --accent2:#f472b6;
+      --accent3:#8b5cf6;
+      --ok:#34d399;
+      --warn:#fbbf24;
+      --danger:#fb7185;
+      --radius:28px;
+      --shadow:0 28px 80px rgba(0,0,0,.30);
+      color-scheme: dark;
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      color:var(--text);
+      background:
+        radial-gradient(circle at 15% 10%, rgba(244,114,182,.24), transparent 22%),
+        radial-gradient(circle at 85% 12%, rgba(34,211,238,.18), transparent 22%),
+        radial-gradient(circle at 50% 115%, rgba(139,92,246,.18), transparent 28%),
+        linear-gradient(180deg, var(--bg1), var(--bg2));
+    }
+    button,input,textarea,select{font:inherit}
+    button{cursor:pointer;border:0}
+    .app{
+      max-width: 1480px;
+      margin:0 auto;
+      padding:16px;
+      min-height:100vh;
+      display:grid;
+      grid-template-columns: 330px 1fr 340px;
+      gap:16px;
+    }
+    .card{
+      background:var(--panel);
+      border:1px solid var(--stroke);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      backdrop-filter: blur(20px);
+    }
+    .sidebar,.rightbar{padding:16px; min-height:calc(100vh - 32px)}
+    .brand{
+      display:flex;align-items:center;gap:14px;
+      padding:4px 4px 16px;
+    }
+    .brand-badge{
+      width:56px;height:56px;border-radius:20px;
+      display:grid;place-items:center;
+      background:linear-gradient(135deg,var(--accent2),var(--accent3),var(--accent));
+      color:#06111b;font-weight:900;font-size:1.25rem;
+      box-shadow:0 16px 35px rgba(34,211,238,.15);
+    }
+    .brand h1{margin:0;font-size:1.12rem}
+    .brand p{margin:4px 0 0;color:var(--muted);font-size:.9rem}
+    .me-card{
+      padding:16px;
+      margin-bottom:14px;
+    }
+    .me-top{
+      display:flex;justify-content:space-between;gap:12px;align-items:flex-start;
+      margin-bottom:14px;
+    }
+    .avatar{
+      width:72px;height:72px;border-radius:24px;
+      display:grid;place-items:center;
+      background:linear-gradient(135deg,var(--accent2),var(--accent));
+      color:#08111d;
+      font-weight:900;font-size:1.8rem;
+      flex:0 0 auto;
+    }
+    .chip{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:8px 12px;
+      border-radius:999px;
+      background:rgba(255,255,255,.10);
+      color:var(--muted);
+      font-size:.82rem;
+      line-height:1;
+    }
+    .tiny{color:var(--muted);font-size:.84rem}
+    .label{color:var(--muted);font-size:.78rem;text-transform:uppercase;letter-spacing:.09em;margin-bottom:6px}
+    .title{margin:0}
+    .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+    .stat{
+      padding:12px;border-radius:20px;background:rgba(255,255,255,.05);
+      text-align:center;
+    }
+    .stat strong{display:block;font-size:1.1rem}
+    .stat span{display:block;color:var(--muted2);font-size:.78rem;margin-top:4px}
+    .stack{display:grid;gap:10px}
+    .btn{
+      padding:13px 14px;border-radius:18px;
+      font-weight:800;
+      transition:transform .18s ease,opacity .18s ease,background .18s ease;
+    }
+    .btn:hover{transform:translateY(-1px)}
+    .btn.primary{background:#fff;color:#08111d}
+    .btn.secondary{background:rgba(255,255,255,.10);color:var(--text);border:1px solid rgba(255,255,255,.08)}
+    .btn.accent{background:linear-gradient(135deg,var(--accent2),var(--accent));color:#08111d}
+    .btn.full{width:100%}
+    .input,.textarea,.select{
+      width:100%;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(0,0,0,.22);
+      color:var(--text);
+      border-radius:18px;
+      padding:13px 14px;
+      outline:none;
+    }
+    .textarea{resize:vertical;min-height:106px}
+    .nav{
+      display:grid;gap:10px;
+      margin-top:14px;
+    }
+    .navbtn{
+      display:flex;align-items:center;gap:12px;
+      width:100%;
+      padding:14px 16px;
+      border-radius:18px;
+      color:var(--text);
+      background:rgba(255,255,255,.04);
+      border:1px solid transparent;
+      text-align:left;
+    }
+    .navbtn.active{
+      background:#fff;
+      color:#08111d;
+      border-color:transparent;
+    }
+    .navbtn span:last-child{margin-left:auto;opacity:.6}
+    .sidebar section{
+      margin-top:12px;
+      padding:14px;
+      border-radius:24px;
+      background:rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.06);
+    }
+    .section-head{
+      display:flex;justify-content:space-between;align-items:flex-start;gap:12px;
+      margin-bottom:12px;
+    }
+    .section-head h2,.section-head h3{margin:0}
+    .section-head p{margin:4px 0 0;color:var(--muted);font-size:.9rem}
+    .main{
+      min-height:calc(100vh - 32px);
+      padding:0;
+      display:flex;
+      flex-direction:column;
+      gap:16px;
+    }
+    .hero{
+      padding:22px;
+      display:flex;
+      justify-content:space-between;
+      gap:18px;
+      align-items:flex-start;
+    }
+    .hero h2{
+      margin:0;
+      font-size:clamp(1.6rem, 3vw, 2.7rem);
+      line-height:1.05;
+    }
+    .hero p{margin:10px 0 0;color:var(--muted);max-width:880px}
+    .pillrow{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+    .pill{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:8px 12px;border-radius:999px;
+      background:rgba(255,255,255,.08);
+      color:rgba(255,255,255,.78);
+      font-size:.82rem;
+    }
+    .langset{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+    .lang{
+      padding:10px 12px;border-radius:14px;background:rgba(255,255,255,.08);color:var(--text)
+    }
+    .lang.active{background:#fff;color:#08111d;font-weight:900}
+    .layout{
+      display:grid;
+      grid-template-columns: 1.05fr .95fr;
+      gap:16px;
+    }
+    .panel{
+      padding:18px;
+    }
+    .panel + .panel{margin-top:0}
+    .composer input,.composer textarea,.composer select,
+    .auth input,.auth select,
+    .friendbox input,.friendbox select,
+    .chatbox input{
+      width:100%;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(0,0,0,.22);
+      color:var(--text);
+      border-radius:18px;
+      padding:13px 14px;
+      outline:none;
+    }
+    .composer textarea{min-height:120px;resize:vertical}
+    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .space{height:10px}
+    .feedlist{display:grid;gap:14px}
+    .post{
+      overflow:hidden;
+      border-radius:26px;
+      background:rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.08);
+    }
+    .postvis{
+      min-height:190px;
+      padding:16px;
+      background:
+        radial-gradient(circle at 70% 10%, rgba(255,255,255,.16), transparent 24%),
+        linear-gradient(135deg, rgba(244,114,182,.18), rgba(34,211,238,.10));
+      display:flex;
+      justify-content:flex-end;
+      flex-direction:column;
+    }
+    .postvis.reel{min-height:260px}
+    .postbody{padding:14px 16px}
+    .topline{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+    .userline{display:flex;gap:12px;align-items:center}
+    .userpic{
+      width:46px;height:46px;border-radius:16px;
+      display:grid;place-items:center;
+      background:linear-gradient(135deg,var(--accent2),var(--accent));
+      color:#08111d;font-weight:900;
+    }
+    .meta{display:flex;gap:10px;flex-wrap:wrap;color:var(--muted);font-size:.88rem;margin-top:6px}
+    .tag{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:7px 10px;border-radius:999px;background:rgba(255,255,255,.10);font-size:.76rem;font-weight:800
+    }
+    .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+    .actions .btn{padding:10px 12px;border-radius:14px;font-weight:800}
+    .two-col{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+    .stories{
+      display:flex;gap:12px;overflow:auto;padding-bottom:4px;
+    }
+    .story{
+      min-width:96px;text-align:center
+    }
+    .ring{
+      width:74px;height:74px;border-radius:22px;margin:0 auto 8px;
+      padding:3px;background:linear-gradient(135deg,var(--accent2),var(--accent));
+    }
+    .inner{
+      width:100%;height:100%;border-radius:19px;background:#111827;
+      display:grid;place-items:center;font-weight:900
+    }
+    .split{
+      display:grid;
+      grid-template-columns: .82fr 1.18fr;
+      gap:12px;
+    }
+    .list,.chat,.friends{
+      padding:18px;
+    }
+    .frienditem,.communityitem,.contact{
+      display:flex;justify-content:space-between;gap:12px;align-items:center;
+      padding:12px 14px;border-radius:18px;
+      background:rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.05);
+    }
+    .frienditem strong,.communityitem strong,.contact strong{display:block}
+    .frienditem span,.communityitem span,.contact span{display:block;color:var(--muted);font-size:.88rem;margin-top:4px}
+    .status{
+      padding:7px 10px;border-radius:999px;font-size:.76rem;font-weight:900
+    }
+    .status.ok{background:rgba(52,211,153,.15);color:#86efac}
+    .status.wait{background:rgba(251,191,36,.16);color:#fde68a}
+    .status.off{background:rgba(148,163,184,.15);color:#cbd5e1}
+    .conv{
+      display:grid;gap:10px;max-height:340px;overflow:auto;padding-right:4px
+    }
+    .bubble{
+      width:fit-content;
+      max-width:82%;
+      padding:12px 14px;
+      border-radius:18px;
+      background:rgba(255,255,255,.08);
+      border-top-left-radius:8px;
+    }
+    .bubble.me{
+      margin-left:auto;
+      background:linear-gradient(135deg,var(--accent2),var(--accent));
+      color:#08111d;
+      border-top-right-radius:8px;
+      font-weight:800;
+    }
+    .chatbox{display:flex;gap:10px;margin-top:12px}
+    .chatbox input{flex:1}
+    .profilehead{
+      display:flex;align-items:center;gap:14px;flex-wrap:wrap
+    }
+    .bigavatar{
+      width:96px;height:96px;border-radius:30px;
+      display:grid;place-items:center;
+      background:linear-gradient(135deg,var(--accent2),var(--accent));
+      color:#08111d;font-weight:900;font-size:2rem
+    }
+    .stats{
+      display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:16px
+    }
+    .stats .stat{background:rgba(255,255,255,.05)}
+    .settingslist{display:grid;gap:10px}
+    .settingsitem{
+      display:flex;justify-content:space-between;gap:12px;align-items:center;
+      padding:13px 14px;border-radius:18px;
+      background:rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.05);
+    }
+    .settingsitem p{margin:4px 0 0;color:var(--muted);font-size:.88rem}
+    .rightbar .card{padding:18px}
+    .notice{
+      padding:14px;border-radius:20px;
+      background:linear-gradient(135deg, rgba(244,114,182,.16), rgba(34,211,238,.10));
+      border:1px solid rgba(255,255,255,.08);
+      color:rgba(255,255,255,.84);
+    }
+    .footer{
+      color:var(--muted);
+      font-size:.84rem;
+      line-height:1.45;
+    }
+
+    .mobilebar{
+      display:none;
+      position:fixed;left:16px;right:16px;bottom:16px;
+      z-index:80;
+      padding:10px;
+      gap:8px;
+      justify-content:space-between;
+    }
+    .mobbtn{
+      flex:1;
+      display:flex;flex-direction:column;align-items:center;gap:4px;
+      padding:10px 6px;
+      background:transparent;
+      color:var(--muted);
+      border-radius:16px;
+    }
+    .mobbtn.active{background:rgba(255,255,255,.08);color:var(--text)}
+    .modalbackdrop{
+      position:fixed;inset:0;display:none;align-items:center;justify-content:center;
+      padding:16px;background:rgba(0,0,0,.48);z-index:90
+    }
+    .modal{
+      width:min(560px,100%);
+      padding:18px;
+    }
+    .tabs{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+    .tab{padding:12px;border-radius:16px;background:rgba(255,255,255,.08);color:var(--text)}
+    .tab.active{background:#fff;color:#08111d;font-weight:900}
+    .hidden{display:none !important}
+
+    @media (max-width: 1200px){
+      .app{grid-template-columns:1fr; padding-bottom:110px}
+      .sidebar,.rightbar,.main{min-height:auto}
+      .layout,.split{grid-template-columns:1fr}
+      .rightbar{display:none}
+      .mobilebar{display:flex}
+    }
+    @media (max-width: 680px){
+      .hero{padding:18px}
+      .panel,.list,.chat,.friends{padding:14px}
+      .grid3,.stats,.two-col{grid-template-columns:1fr}
+      .hero h2{font-size:1.6rem}
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar card">
+      <div class="brand">
+        <div class="brand-badge">TS</div>
+        <div>
+          <h1>TalkSnap Kids</h1>
+          <p>Messages, amis par code, stories et reels.</p>
+        </div>
+      </div>
+
+      <div class="card me-card">
+        <div class="me-top">
+          <div>
+            <div class="label">Compte actif</div>
+            <h3 id="meName" class="title">—</h3>
+            <div class="tiny" id="meCode">—</div>
+          </div>
+          <div class="avatar" id="meAvatar">Y</div>
+        </div>
+        <div class="grid3">
+          <div class="stat"><strong id="stFriends">0</strong><span>Amis</span></div>
+          <div class="stat"><strong id="stPosts">0</strong><span>Posts</span></div>
+          <div class="stat"><strong id="stReq">0</strong><span>Demandes</span></div>
+        </div>
+      </div>
+
+      <section>
+        <div class="section-head">
+          <div>
+            <h3>Comptes</h3>
+            <p>Créer et changer de profil pour tester l’ajout d’amis.</p>
+          </div>
+        </div>
+        <div class="stack">
+          <button class="btn primary full" id="openAuth">Créer / se connecter</button>
+          <select class="select" id="accountSelect"></select>
+          <button class="btn secondary full" id="switchAccount">Changer de compte</button>
+        </div>
+      </section>
+
+      <section>
+        <div class="section-head">
+          <div>
+            <h3>Navigation</h3>
+            <p>Le cœur de l’app.</p>
+          </div>
+        </div>
+        <div class="nav">
+          <button class="navbtn active" data-view="feed"><span>🏠 Fil</span><span>›</span></button>
+          <button class="navbtn" data-view="stories"><span>✨ Stories</span><span>›</span></button>
+          <button class="navbtn" data-view="messages"><span>💬 Messages</span><span>›</span></button>
+          <button class="navbtn" data-view="friends"><span>👥 Amis</span><span>›</span></button>
+          <button class="navbtn" data-view="profile"><span>👤 Profil</span><span>›</span></button>
+          <button class="navbtn" data-view="settings"><span>⚙️ Paramètres</span><span>›</span></button>
+        </div>
+      </section>
+
+      <section>
+        <div class="section-head">
+          <div>
+            <h3>Langue</h3>
+            <p>Interface multilingue.</p>
+          </div>
+        </div>
+        <div class="row" id="langSwitch"></div>
+      </section>
+
+      <section>
+        <div class="notice">
+          Cette version affiche vraiment les demandes d’amis et les accepte si deux comptes se suivent mutuellement.
+        </div>
+      </section>
+    </aside>
+
+    <main class="main">
+      <section class="card hero">
+        <div>
+          <div class="chip">👋 <span id="heroChip">Une seule app simple et jolie pour parler et partager.</span></div>
+          <h2 id="heroTitle">Une app inspirée de Snapchat, plus claire et plus facile à utiliser.</h2>
+          <p id="heroText">Ajout d’amis par code, stories, messages, mini-reels et profils propres.</p>
+          <div class="pillrow" id="heroPills"></div>
+        </div>
+        <div class="langset" id="heroLang"></div>
+      </section>
+
+      <div class="layout">
+        <section class="grid">
+          <div class="card panel composer" id="viewFeed">
+            <div class="section-head">
+              <div>
+                <h3>Publier</h3>
+                <p>Story ou mini-reel.</p>
+              </div>
+              <span class="tag">60s</span>
+            </div>
+            <div class="stack">
+              <input class="input" id="draftTitle" placeholder="Titre" />
+              <textarea class="textarea" id="draftText" placeholder="Description, hashtags, idée de vidéo..."></textarea>
+              <div class="row">
+                <button class="btn accent" id="publishBtn">Publier</button>
+                <button class="btn secondary" id="storyBtn">📸 Story</button>
+                <button class="btn secondary" id="voiceBtn">🎙️ Vocal</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="card panel hidden" id="viewStories">
+            <div class="section-head">
+              <div>
+                <h3>Stories</h3>
+                <p>Photos et vidéos qui disparaissent après 24h.</p>
+              </div>
+              <span class="tag">24h</span>
+            </div>
+            <div class="stories" id="storiesRow"></div>
+          </div>
+
+          <div class="card panel hidden" id="viewMessages">
+            <div class="section-head">
+              <div>
+                <h3>Messages</h3>
+                <p>Discussions privées.</p>
+              </div>
+              <span class="tag">DM</span>
+            </div>
+            <div class="conv" id="conversation"></div>
+            <div class="chatbox">
+              <input class="input" id="messageInput" placeholder="Écrire un message..." />
+              <button class="btn accent" id="sendMsgBtn">Envoyer</button>
+            </div>
+          </div>
+
+          <div class="card panel hidden" id="viewFriends">
+            <div class="section-head">
+              <div>
+                <h3>Ajouter un ami</h3>
+                <p>Quand deux comptes se suivent, la demande devient ami automatiquement.</p>
+              </div>
+              <span class="tag">ID</span>
+            </div>
+            <div class="card panel friendbox" style="margin-bottom:12px">
+              <div class="section-head">
+                <div>
+                  <h3>Ton code</h3>
+                  <p>À partager avec un ami.</p>
+                </div>
+              </div>
+              <div class="row">
+                <input class="input" id="myCodeCopy" readonly />
+                <button class="btn secondary" id="copyCodeBtn">Copier</button>
+              </div>
+            </div>
+            <div class="card panel friendbox" style="margin-bottom:12px">
+              <div class="section-head">
+                <div>
+                  <h3>Nouvelle demande</h3>
+                  <p>Colle le code du compte à ajouter.</p>
+                </div>
+              </div>
+              <div class="row">
+                <input class="input" id="friendCodeInput" placeholder="TS-1234-5678" />
+                <button class="btn accent" id="addFriendBtn">Ajouter</button>
+              </div>
+              <div class="tiny" id="friendFeedback" style="margin-top:10px"></div>
+            </div>
+            <div class="two-col">
+              <div class="card panel">
+                <div class="section-head"><div><h3>Amis</h3><p>Liste acceptée.</p></div></div>
+                <div class="stack" id="friendsList"></div>
+              </div>
+              <div class="card panel">
+                <div class="section-head"><div><h3>Demandes</h3><p>Reçues / envoyées.</p></div></div>
+                <div class="stack" id="requestsList"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card panel hidden" id="viewProfile">
+            <div class="section-head">
+              <div>
+                <h3>Profil</h3>
+                <p>Infos visibles par les amis.</p>
+              </div>
+              <span class="tag">Bio</span>
+            </div>
+            <div class="profilehead">
+              <div class="bigavatar" id="profileAvatar">Y</div>
+              <div>
+                <h3 style="margin:0" id="profileName">Your Name</h3>
+                <div class="tiny" id="profileHandle">@username • TS-0000-0000</div>
+                <p class="tiny" id="profileBio" style="max-width:720px;margin-top:10px">Bio courte pour ton profil.</p>
+              </div>
+            </div>
+            <div class="stats">
+              <div class="stat"><strong id="profileFriends">0</strong><span>Amis</span></div>
+              <div class="stat"><strong id="profilePosts">0</strong><span>Posts</span></div>
+              <div class="stat"><strong id="profileStories">0</strong><span>Stories</span></div>
+            </div>
+            <div class="row" style="margin-top:14px">
+              <button class="btn accent">Modifier profil</button>
+              <button class="btn secondary">QR code</button>
+            </div>
+          </div>
+
+          <div class="card panel hidden" id="viewSettings">
+            <div class="section-head">
+              <div>
+                <h3>Paramètres</h3>
+                <p>Langue, sécurité, confidentialité.</p>
+              </div>
+              <span class="tag">⚙️</span>
+            </div>
+            <div class="settingslist">
+              <div class="settingsitem"><div><strong>Compte</strong><p>Changer pseudo et mot de passe</p></div><span>›</span></div>
+              <div class="settingsitem"><div><strong>Confidentialité</strong><p>Qui peut t’ajouter</p></div><span>›</span></div>
+              <div class="settingsitem"><div><strong>Notifications</strong><p>Messages, amis, stories</p></div><span>›</span></div>
+              <div class="settingsitem"><div><strong>Langue</strong><p>Français, English, Español</p></div><span>›</span></div>
+              <div class="settingsitem"><div><strong>Sécurité</strong><p>Bloquer, signaler, protéger</p></div><span>›</span></div>
+            </div>
+          </div>
+
+          <div class="card panel">
+            <div class="section-head">
+              <div>
+                <h3>Fil</h3>
+                <p>Style réseau social avec cartes plus propres.</p>
+              </div>
+              <span class="tag">Reels</span>
+            </div>
+            <div class="feedlist" id="feedList"></div>
+          </div>
+        </section>
+
+        <aside class="card rightbar">
+          <div class="section-head">
+            <div>
+              <h3>Communautés</h3>
+              <p>Inspiration Discord.</p>
+            </div>
+            <span class="tag">Serveurs</span>
+          </div>
+          <div class="stack" id="communityList"></div>
+
+          <div class="card panel" style="margin-top:14px">
+            <div class="section-head">
+              <div>
+                <h3>Compte rapide</h3>
+                <p>Créer un autre compte pour tester les amis.</p>
+              </div>
+            </div>
+            <div class="stack">
+              <button class="btn primary full" id="quickCreate">Créer un compte de test</button>
+              <div class="footer">Tu peux créer deux comptes sur le même téléphone, puis les faire s’ajouter pour voir le système fonctionner.</div>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </main>
+  </div>
+
+  <div class="mobilebar card" id="mobilebar"></div>
+
+  <div class="modalbackdrop" id="authModal">
+    <div class="card modal">
+      <div class="section-head">
+        <div>
+          <h3 id="authTitle">Créer un compte</h3>
+          <p id="authSubtitle">Un code unique sera généré automatiquement.</p>
+        </div>
+        <button class="btn secondary" id="closeAuth">✕</button>
+      </div>
+      <div class="tabs">
+        <button class="tab active" id="tabRegister">Créer un compte</button>
+        <button class="tab" id="tabLogin">Se connecter</button>
+      </div>
+      <div class="stack">
+        <input class="input" id="authUsername" placeholder="Nom d'utilisateur" />
+        <input class="input" id="authDisplayName" placeholder="Nom affiché" />
+        <input class="input" id="authPassword" type="password" placeholder="Mot de passe" />
+        <select class="select" id="authLanguage">
+          <option value="fr">Français</option>
+          <option value="en">English</option>
+          <option value="es">Español</option>
+        </select>
+        <button class="btn accent full" id="authSubmit">Créer</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const KEY = "talksnap-kids-v2";
+    const I18N = {
+      fr: {
+        appName: "TalkSnap Kids",
+        heroChip: "Une seule app simple et jolie pour parler et partager.",
+        heroTitle: "Une app inspirée de Snapchat, plus claire et plus facile à utiliser.",
+        heroText: "Ajout d’amis par code, stories, messages, mini-reels et profils propres.",
+        publish: "Publier",
+        feed: "Fil",
+        stories: "Stories",
+        messages: "Messages",
+        friends: "Amis",
+        profile: "Profil",
+        settings: "Paramètres",
+        addFriendTitle: "Ajouter un ami par code",
+        addFriendNote: "Quand deux comptes se suivent, la demande devient ami automatiquement.",
+        createAccount: "Créer un compte",
+        login: "Se connecter",
+        copyCode: "Copier",
+        send: "Envoyer",
+        language: "Langue",
+      },
+      en: {
+        appName: "TalkSnap Kids",
+        heroChip: "One simple and pretty app to chat and share.",
+        heroTitle: "A Snapchat-inspired app, cleaner and easier to use.",
+        heroText: "Friend codes, stories, messages, mini-reels and neat profiles.",
+        publish: "Publish",
+        feed: "Feed",
+        stories: "Stories",
+        messages: "Messages",
+        friends: "Friends",
+        profile: "Profile",
+        settings: "Settings",
+        addFriendTitle: "Add a friend by code",
+        addFriendNote: "When two accounts follow each other, the request becomes a friend automatically.",
+        createAccount: "Create account",
+        login: "Log in",
+        copyCode: "Copy",
+        send: "Send",
+        language: "Language",
+      },
+      es: {
+        appName: "TalkSnap Kids",
+        heroChip: "Una app simple y bonita para hablar y compartir.",
+        heroTitle: "Una app inspirada en Snapchat, más clara y fácil de usar.",
+        heroText: "Códigos de amigo, historias, mensajes, mini-reels y perfiles limpios.",
+        publish: "Publicar",
+        feed: "Inicio",
+        stories: "Historias",
+        messages: "Mensajes",
+        friends: "Amigos",
+        profile: "Perfil",
+        settings: "Ajustes",
+        addFriendTitle: "Añadir amigo por código",
+        addFriendNote: "Cuando dos cuentas se siguen, la solicitud se convierte en amigo automáticamente.",
+        createAccount: "Crear cuenta",
+        login: "Iniciar sesión",
+        copyCode: "Copiar",
+        send: "Enviar",
+        language: "Idioma",
+      },
+    };
+
+    const DEFAULT = {
+      lang: "fr",
+      view: "feed",
+      authMode: "register",
+      activeCode: "",
+      accounts: [],
+      posts: [
+        { id: 1, user: "Nova", type: "reel", title: "Night edit", text: "Vidéo verticale inspiration Snap/TikTok.", likes: 182, comments: 24, color: 1 },
+        { id: 2, user: "Luna", type: "story", title: "Weekend", text: "Story qui disparaît après 24h.", likes: 96, comments: 11, color: 2 },
+      ],
+      stories: [
+        { id: 1, user: "Rin", label: "Story live" },
+        { id: 2, user: "Sara", label: "Photo snap" },
+        { id: 3, user: "Alex", label: "Morning" },
+        { id: 4, user: "Nina", label: "Music" },
+      ],
+      communities: [
+        { id: 1, name: "Friends Lounge", desc: "Salon privé pour proches", status: "ok" },
+        { id: 2, name: "Anime Club", desc: "Discussions + messages épinglés", status: "ok" },
+        { id: 3, name: "Gaming Squad", desc: "Voix + partage de clips", status: "off" },
+      ],
+      messages: [
+        { id: 1, from: "Mika", text: "Envoie ton code ID 👀" },
+        { id: 2, from: "You", text: "Bien sûr, je te l’envoie !" },
+        { id: 3, from: "Mika", text: "Parfait, j’ai envoyé la demande." },
+      ],
+      draftTitle: "",
+      draftText: "",
+      draftMsg: "",
+      friendCode: "",
+      feedback: "",
+    };
+
+    function load() {
+      try {
+        const raw = localStorage.getItem(KEY);
+        if (!raw) return structuredClone(DEFAULT);
+        return { ...structuredClone(DEFAULT), ...JSON.parse(raw) };
+      } catch {
+        return structuredClone(DEFAULT);
+      }
+    }
+
+    let S = load();
+
+    function save() { localStorage.setItem(KEY, JSON.stringify(S)); }
+
+    function codeGen() {
+      return `TS-${Math.floor(1000 + Math.random() * 9000)}-${Math.floor(1000 + Math.random() * 9000)}`;
+    }
+    function initials(name) {
+      return String(name || "?").trim().slice(0,1).toUpperCase();
+    }
+    function i18n() { return I18N[S.lang] || I18N.fr; }
+    function activeAccount() {
+      return S.accounts.find(a => a.code === S.activeCode) || null;
+    }
+
+    function ensureActive() {
+      if (!S.activeCode && S.accounts[0]) S.activeCode = S.accounts[0].code;
+      if (!S.activeCode && !S.accounts.length) {
+        const seed = { username: "user", displayName: "Your Name", code: codeGen(), lang: S.lang, bio: "Bio courte pour ton profil.", friends: [], sent: [], received: [] };
+        S.accounts.push(seed);
+        S.activeCode = seed.code;
+      }
+    }
+
+    function statsFor(acc) {
+      if (!acc) return { friends: 0, requests: 0, posts: 0 };
+      return {
+        friends: acc.friends.length,
+        requests: (acc.received.filter(r => r.status === "pending").length + acc.sent.filter(r => r.status === "pending").length),
+        posts: S.posts.filter(p => p.user === acc.displayName).length
+      };
+    }
+
+    function switchView(view) {
+      S.view = view;
+      save();
+      render();
+    }
+
+    function setLang(lang) {
+      S.lang = lang;
+      const acc = activeAccount();
+      if (acc) acc.lang = lang;
+      save();
+      render();
+    }
+
+    function openAuth(mode = "register") {
+      S.authMode = mode;
+      document.getElementById("authModal").style.display = "flex";
+      syncAuthUI();
+    }
+    function closeAuth() { document.getElementById("authModal").style.display = "none"; }
+
+    function syncAuthUI() {
+      const isReg = S.authMode === "register";
+      document.getElementById("tabRegister").classList.toggle("active", isReg);
+      document.getElementById("tabLogin").classList.toggle("active", !isReg);
+      document.getElementById("authTitle").textContent = isReg ? i18n().createAccount : i18n().login;
+      document.getElementById("authSubtitle").textContent = isReg ? "Un code unique sera généré automatiquement." : "Sélectionne un compte existant via son code.";
+      document.getElementById("authSubmit").textContent = isReg ? i18n().createAccount : i18n().login;
+    }
+
+    function registerAccount() {
+      const username = document.getElementById("authUsername").value.trim();
+      const displayName = document.getElementById("authDisplayName").value.trim();
+      const password = document.getElementById("authPassword").value.trim();
+      const language = document.getElementById("authLanguage").value;
+
+      if (!username || !displayName || password.length < 4) {
+        alert("Remplis les champs du compte.");
+        return;
+      }
+
+      const code = codeGen();
+      S.accounts.push({
+        username,
+        displayName,
+        code,
+        password,
+        lang: language,
+        bio: "Prêt à discuter.",
+        friends: [],
+        sent: [],
+        received: []
+      });
+      S.activeCode = code;
+      S.lang = language;
+      save();
+      closeAuth();
+      render();
+    }
+
+    function loginAccount() {
+      const username = document.getElementById("authUsername").value.trim();
+      const password = document.getElementById("authPassword").value.trim();
+      const byName = S.accounts.find(a => a.username.toLowerCase() === username.toLowerCase());
+      const byCode = S.accounts.find(a => a.code.toLowerCase() === username.toLowerCase());
+
+      const found = byName || byCode;
+      if (!found) {
+        alert("Compte introuvable. Crée d’abord un compte.");
+        return;
+      }
+      if (found.password && password && found.password !== password) {
+        alert("Mot de passe incorrect.");
+        return;
+      }
+      S.activeCode = found.code;
+      S.lang = found.lang || S.lang;
+      save();
+      closeAuth();
+      render();
+    }
+
+    function createTestAccount() {
+      const n = S.accounts.length + 1;
+      const acc = {
+        username: `test${n}`,
+        displayName: `Test ${n}`,
+        code: codeGen(),
+        password: "1234",
+        lang: S.lang,
+        bio: "Compte de test.",
+        friends: [],
+        sent: [],
+        received: []
+      };
+      S.accounts.push(acc);
+      S.activeCode = acc.code;
+      save();
+      render();
+    }
+
+    function acceptRequest(fromCode) {
+      const me = activeAccount();
+      if (!me) return;
+      const other = S.accounts.find(a => a.code === fromCode);
+      if (!other) return;
+
+      me.received = me.received.map(r => r.fromCode === fromCode ? { ...r, status: "accepted" } : r);
+      other.sent = other.sent.map(r => r.toCode === me.code ? { ...r, status: "accepted" } : r);
+
+      if (!me.friends.includes(fromCode)) me.friends.push(fromCode);
+      if (!other.friends.includes(me.code)) other.friends.push(me.code);
+
+      save();
+      render();
+    }
+
+    function addFriend() {
+      const me = activeAccount();
+      const targetCode = (document.getElementById("friendCodeInput").value || "").trim().toUpperCase();
+      const feedback = document.getElementById("friendFeedback");
+      if (!me) return;
+      if (!targetCode) {
+        feedback.textContent = "Entre un code.";
+        feedback.style.color = "var(--warn)";
+        return;
+      }
+      if (targetCode === me.code) {
+        feedback.textContent = "Tu ne peux pas t’ajouter toi-même.";
+        feedback.style.color = "var(--danger)";
+        return;
+      }
+
+      const other = S.accounts.find(a => a.code === targetCode);
+      if (!other) {
+        feedback.textContent = "Compte introuvable dans ce navigateur. Crée un second compte pour tester.";
+        feedback.style.color = "var(--warn)";
+        return;
+      }
+
+      const alreadyFriend = me.friends.includes(targetCode) || other.friends.includes(me.code);
+      if (alreadyFriend) {
+        feedback.textContent = "Vous êtes déjà amis.";
+        feedback.style.color = "var(--ok)";
+        return;
+      }
+
+      const mutualPending = other.sent.some(r => r.toCode === me.code && r.status === "pending");
+      if (mutualPending) {
+        me.friends.push(targetCode);
+        other.friends.push(me.code);
+        me.received = me.received.map(r => r.fromCode === targetCode ? { ...r, status: "accepted" } : r);
+        other.sent = other.sent.map(r => r.toCode === me.code ? { ...r, status: "accepted" } : r);
+        feedback.textContent = `Ami accepté automatiquement avec ${other.displayName}.`;
+        feedback.style.color = "var(--ok)";
+      } else {
+        me.sent.push({ id: Date.now(), toCode: targetCode, status: "pending" });
+        other.received.push({ id: Date.now(), fromCode: me.code, fromName: me.displayName, status: "pending" });
+        feedback.textContent = `Demande envoyée à ${other.displayName}.`;
+        feedback.style.color = "var(--accent)";
+      }
+
+      document.getElementById("friendCodeInput").value = "";
+      save();
+      render();
+    }
+
+    function sendMsg() {
+      const input = document.getElementById("messageInput");
+      const text = input.value.trim();
+      if (!text) return;
+      S.messages.push({ id: Date.now(), from: "You", text });
+      input.value = "";
+      save();
+      render();
+    }
+
+    function publish() {
+      const title = document.getElementById("draftTitle").value.trim();
+      const text = document.getElementById("draftText").value.trim();
+      if (!title || !text) return;
+      const me = activeAccount();
+      const name = me?.displayName || "You";
+      S.posts.unshift({
+        id: Date.now(),
+        user: name,
+        type: "reel",
+        title,
+        text,
+        likes: 0,
+        comments: 0,
+        color: Math.random() > 0.5 ? 1 : 2
+      });
+      document.getElementById("draftTitle").value = "";
+      document.getElementById("draftText").value = "";
+      save();
+      render();
+    }
+
+    function copyCode() {
+      const me = activeAccount();
+      if (!me) return;
+      navigator.clipboard.writeText(me.code);
+      alert("Code copié : " + me.code);
+    }
+
+    function render() {
+      ensureActive();
+      const me = activeAccount();
+      const dict = i18n();
+
+      if (me) {
+        document.getElementById("meName").textContent = me.displayName;
+        document.getElementById("meCode").textContent = me.code;
+        document.getElementById("meAvatar").textContent = initials(me.displayName);
+        document.getElementById("profileAvatar").textContent = initials(me.displayName);
+        document.getElementById("profileName").textContent = me.displayName;
+        document.getElementById("profileHandle").textContent = `@${me.username} • ${me.code}`;
+        document.getElementById("profileBio").textContent = me.bio || "Bio courte pour ton profil.";
+        document.getElementById("myCodeCopy").value = me.code;
+      }
+
+      const stats = statsFor(me);
+      document.getElementById("stFriends").textContent = stats.friends;
+      document.getElementById("stReq").textContent = stats.requests;
+      document.getElementById("stPosts").textContent = stats.posts;
+      document.getElementById("profileFriends").textContent = stats.friends;
+      document.getElementById("profilePosts").textContent = stats.posts;
+      document.getElementById("profileStories").textContent = S.stories.length;
+
+      document.getElementById("heroChip").textContent = dict.heroChip;
+      document.getElementById("heroTitle").textContent = dict.heroTitle;
+      document.getElementById("heroText").textContent = dict.heroText;
+
+      const pillWrap = document.getElementById("heroPills");
+      pillWrap.innerHTML = [
+        "Amis par code",
+        "Stories 24h",
+        "Chats privés",
+        "Mini-reels",
+        "Plusieurs langues"
+      ].map(x => `<span class="pill">${x}</span>`).join("");
+
+      const heroLang = document.getElementById("heroLang");
+      heroLang.innerHTML = ["fr","en","es"].map(l => `<button class="lang ${S.lang===l ? "active" : ""}" data-lang="${l}">${l.toUpperCase()}</button>`).join("");
+      heroLang.querySelectorAll("[data-lang]").forEach(b => b.onclick = () => setLang(b.dataset.lang));
+
+      const langSwitch = document.getElementById("langSwitch");
+      langSwitch.innerHTML = ["fr","en","es"].map(l => `<button class="lang ${S.lang===l ? "active" : ""}" data-lang2="${l}">${l.toUpperCase()}</button>`).join("");
+      langSwitch.querySelectorAll("[data-lang2]").forEach(b => b.onclick = () => setLang(b.dataset.lang2));
+
+      const accountSelect = document.getElementById("accountSelect");
+      accountSelect.innerHTML = S.accounts.map(acc => `<option value="${acc.code}" ${acc.code===S.activeCode ? "selected" : ""}>${acc.displayName} — ${acc.code}</option>`).join("");
+
+      const feed = document.getElementById("feedList");
+      feed.innerHTML = S.posts.map(post => `
+        <article class="post">
+          <div class="postvis ${post.color === 1 ? "reel" : ""}">
+            <div class="topline">
+              <div class="userline">
+                <div class="userpic">${initials(post.user)}</div>
+                <div>
+                  <strong>${post.user}</strong>
+                  <div class="meta"><span>@${String(post.user).toLowerCase().replace(/\s+/g,"")}</span><span>•</span><span>${post.type.toUpperCase()}</span></div>
+                </div>
+              </div>
+              <span class="tag">${post.type}</span>
+            </div>
+            <div style="margin-top:18px;max-width:660px">
+              <h3 style="margin:0 0 6px">${post.title}</h3>
+              <div style="color:rgba(255,255,255,.78)">${post.text}</div>
+            </div>
+          </div>
+          <div class="postbody">
+            <div class="meta"><span>❤️ ${post.likes}</span><span>💬 ${post.comments}</span><span>👁️ Live</span></div>
+            <div class="actions">
+              <button class="btn secondary">Like</button>
+              <button class="btn secondary">Comment</button>
+              <button class="btn secondary">Share</button>
+            </div>
+          </div>
+        </article>
+      `).join("");
+
+      document.getElementById("storiesRow").innerHTML = S.stories.map(s => `
+        <div class="story">
+          <div class="ring"><div class="inner">${initials(s.user)}</div></div>
+          <div style="font-size:.86rem">${s.user}</div>
+          <div class="tiny">${s.label}</div>
+        </div>
+      `).join("");
+
+      document.getElementById("conversation").innerHTML = S.messages.map(m => `
+        <div class="bubble ${m.from === "You" ? "me" : ""}">${m.text}</div>
+      `).join("");
+
+      const friendsList = document.getElementById("friendsList");
+      friendsList.innerHTML = me.friends.length
+        ? me.friends.map(code => {
+            const f = S.accounts.find(a => a.code === code);
+            return `
+              <div class="frienditem">
+                <div>
+                  <strong>${f ? f.displayName : "Unknown"}</strong>
+                  <span>${code}</span>
+                </div>
+                <span class="status ok">Ami</span>
+              </div>
+            `;
+          }).join("")
+        : `<div class="tiny">Aucun ami pour le moment.</div>`;
+
+      const requestsList = document.getElementById("requestsList");
+      const incoming = me.received.filter(r => r.status === "pending");
+      const outgoing = me.sent.filter(r => r.status === "pending");
+      const items = [
+        ...incoming.map(r => ({
+          title: r.fromName || r.fromCode,
+          code: r.fromCode,
+          kind: "Reçue",
+          action: true
+        })),
+        ...outgoing.map(r => ({
+          title: r.toCode,
+          code: r.toCode,
+          kind: "Envoyée",
+          action: false
+        }))
+      ];
+      requestsList.innerHTML = items.length
+        ? items.map(req => `
+            <div class="frienditem">
+              <div>
+                <strong>${req.title}</strong>
+                <span>${req.kind} • ${req.code}</span>
+              </div>
+              ${req.action ? `<button class="btn secondary" data-accept="${req.code}" style="padding:10px 12px">Accepter</button>` : `<span class="status wait">En attente</span>`}
+            </div>
+          `).join("")
+        : `<div class="tiny">Aucune demande en attente.</div>`;
+
+      requestsList.querySelectorAll("[data-accept]").forEach(btn => {
+        btn.onclick = () => acceptRequest(btn.dataset.accept);
+      });
+
+      document.getElementById("communityList").innerHTML = S.communities.map(c => `
+        <div class="communityitem">
+          <div>
+            <strong>${c.name}</strong>
+            <span>${c.desc}</span>
+          </div>
+          <span class="status ${c.status}">${c.status === "ok" ? "Online" : "Offline"}</span>
+        </div>
+      `).join("");
+
+      const buttons = document.querySelectorAll(".navbtn");
+      buttons.forEach(b => b.classList.toggle("active", b.dataset.view === S.view));
+      ["viewFeed","viewStories","viewMessages","viewFriends","viewProfile","viewSettings"].forEach(id => document.getElementById(id).classList.add("hidden"));
+      const map = {
+        feed: "viewFeed",
+        stories: "viewStories",
+        messages: "viewMessages",
+        friends: "viewFriends",
+        profile: "viewProfile",
+        settings: "viewSettings"
+      };
+      document.getElementById(map[S.view]).classList.remove("hidden");
+
+      const mobile = document.getElementById("mobilebar");
+      mobile.innerHTML = [
+        ["feed","🏠"],["stories","✨"],["messages","💬"],["friends","👥"],["profile","👤"]
+      ].map(([v, ic]) => `<button class="mobbtn ${S.view===v ? "active" : ""}" data-mob="${v}">${ic}<small>${dict[v]}</small></button>`).join("");
+      mobile.querySelectorAll("[data-mob]").forEach(b => b.onclick = () => switchView(b.dataset.mob));
+
+      document.querySelectorAll(".navbtn").forEach(b => b.onclick = () => switchView(b.dataset.view));
+      document.querySelectorAll(".lang").forEach(b => {
+        b.onclick = () => setLang(b.dataset.lang || b.dataset.lang2);
+      });
+    }
+
+    document.getElementById("openAuth").onclick = () => openAuth("register");
+    document.getElementById("closeAuth").onclick = closeAuth;
+    document.getElementById("tabRegister").onclick = () => { S.authMode = "register"; syncAuthUI(); };
+    document.getElementById("tabLogin").onclick = () => { S.authMode = "login"; syncAuthUI(); };
+    document.getElementById("authSubmit").onclick = () => S.authMode === "register" ? registerAccount() : loginAccount();
+    document.getElementById("authModal").addEventListener("click", (e) => { if (e.target.id === "authModal") closeAuth(); });
+
+    document.getElementById("publishBtn").onclick = publish;
+    document.getElementById("sendMsgBtn").onclick = sendMsg;
+    document.getElementById("addFriendBtn").onclick = addFriend;
+    document.getElementById("copyCodeBtn").onclick = copyCode;
+    document.getElementById("switchAccount").onclick = () => {
+      const sel = document.getElementById("accountSelect");
+      if (sel.value) { S.activeCode = sel.value; save(); render(); }
+    };
+    document.getElementById("quickCreate").onclick = createTestAccount;
+
+    document.getElementById("storyBtn").onclick = () => switchView("stories");
+    document.getElementById("voiceBtn").onclick = () => alert("Prototype: on pourra ajouter les vocaux ensuite.");
+
+    // first load
+    ensureActive();
+    if (!S.accounts.length) {
+      const seed = {
+        username: "user1",
+        displayName: "Your Name",
+        code: codeGen(),
+        password: "1234",
+        lang: S.lang,
+        bio: "Prêt à discuter.",
+        friends: [],
+        sent: [],
+        received: []
+      };
+      S.accounts.push(seed);
+      S.activeCode = seed.code;
+      save();
+    }
+    if (!S.activeCode && S.accounts[0]) S.activeCode = S.accounts[0].code;
+    render();
+    openAuth("register");
+  </script>
+</body>
+</html>
